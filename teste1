@@ -1,0 +1,20 @@
+#importando bibliotecas
+from bs4 import BeautifulSoup
+import requests
+import wget
+#pegando conteudo o url na página indicada 
+def url_inicial( ):
+  html = requests.get("http://www.ans.gov.br/prestadores/tiss-troca-de-informacao-de-saude-suplementar").content
+  soup = BeautifulSoup(html,'html.parser')
+  tag_a = soup.find(class_='alert alert-icolink')
+  tag_a = tag_a.a
+  return (tag_a['href'])
+def url_download(tag_a):
+  html = requests.get('http://www.ans.gov.br/'+str(tag_a)).content
+  soup = BeautifulSoup(html,'html.parser')
+  url = soup.find(class_='btn btn-primary btn-sm center-block')
+  url = ('http://www.ans.gov.br'+ str(url['href']))
+  return url
+def download_arq(url):
+  wget.download(url,'componente_org.pdf')
+download_arq(url_download(url_inicial( )))
